@@ -1,0 +1,400 @@
+{
+  "name": "College Admission Data",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "🎓 Welcome to CollegeMate!\nYour smart admission guide. Let’s find the right college, course, and admission path for you.",
+        "options": {
+          "responseMode": "lastNode"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "287b62df-f69f-4ca1-ab3a-fd83cf9d6ff8",
+      "name": "When chat message received",
+      "webhookId": "8e421841-48a6-4e4a-9939-b06c8795c367"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a friendly College Admission Assistant helping students and parents.\n\nRules:\n1. For questions about courses, fees, eligibility or seats, call get_courses.\n2. For dates and deadlines, call get_deadlines.\n3. For hostel, scholarships, how to apply or general info, call get_faq.\n4. Never invent fees, dates or eligibility. If the information is not in the data, say: \"I don't have that information. Please contact the admission office.\"\n5. For total cost questions, call calculate_total_fee instead of calculating yourself.\n6. If a student shows interest in a course, politely ask for their name, phone number and email, then call save_enquiry. Never save without all details.\n7. Answer in short, simple, polite language. Use bullet points for lists.\n8. If the student asks something unrelated to admissions, politely say you can only help with admission questions.\n9. Never share one student's enquiry details with another person."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "33061670-def5-4d7f-8396-77aa577a4c71",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        192
+      ],
+      "id": "c14bfcea-3636-40d7-a664-cf821fc9daf3",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        192
+      ],
+      "id": "8f6686c9-0f5a-46f9-b49d-e8c3ba12a66c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Returns all courses with columns: Course, Department, Duration, Annual Fee, Eligibility, Seats, Entrance Exam. Use it for any question about courses, fees, eligibility or seats.",
+        "documentId": {
+          "__rl": true,
+          "value": "15zMMWKt_dapShETPswDoVDTtQ4WON70-SRClgeuTFJk",
+          "mode": "list",
+          "cachedResultName": "College Admission Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15zMMWKt_dapShETPswDoVDTtQ4WON70-SRClgeuTFJk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Courses",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15zMMWKt_dapShETPswDoVDTtQ4WON70-SRClgeuTFJk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        208
+      ],
+      "id": "58d4850f-25dc-45a6-9e85-3e954b7081e1",
+      "name": "get_courses",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QO0ZtVzyWkPpMwdh",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Returns frequently asked questions and answers about hostel, scholarships, application process and general college info. Use it for general questions.",
+        "documentId": {
+          "__rl": true,
+          "value": "15zMMWKt_dapShETPswDoVDTtQ4WON70-SRClgeuTFJk",
+          "mode": "list",
+          "cachedResultName": "College Admission Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15zMMWKt_dapShETPswDoVDTtQ4WON70-SRClgeuTFJk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1390813732,
+          "mode": "list",
+          "cachedResultName": "FAQ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15zMMWKt_dapShETPswDoVDTtQ4WON70-SRClgeuTFJk/edit#gid=1390813732"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        576,
+        208
+      ],
+      "id": "dea92703-3e05-4d92-8128-a0733d53a567",
+      "name": "get_FAQ",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QO0ZtVzyWkPpMwdh",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Returns admission dates with columns: Course, Application Start, Last Date, Exam Date, Result Date. Use it for any question about dates or deadlines.",
+        "documentId": {
+          "__rl": true,
+          "value": "15zMMWKt_dapShETPswDoVDTtQ4WON70-SRClgeuTFJk",
+          "mode": "list",
+          "cachedResultName": "College Admission Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15zMMWKt_dapShETPswDoVDTtQ4WON70-SRClgeuTFJk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1703970052,
+          "mode": "list",
+          "cachedResultName": "Deadlines",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15zMMWKt_dapShETPswDoVDTtQ4WON70-SRClgeuTFJk/edit#gid=1703970052"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        208
+      ],
+      "id": "81e6c6d4-eb2f-45ab-a750-ee857ae6acaa",
+      "name": "get_Deadlines",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QO0ZtVzyWkPpMwdh",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Saves a student enquiry. Call it only after the student has given their name, phone, email and course. Fill Date with today's date.",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "15zMMWKt_dapShETPswDoVDTtQ4WON70-SRClgeuTFJk",
+          "mode": "list",
+          "cachedResultName": "College Admission Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15zMMWKt_dapShETPswDoVDTtQ4WON70-SRClgeuTFJk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 300537807,
+          "mode": "list",
+          "cachedResultName": "Enquiries",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15zMMWKt_dapShETPswDoVDTtQ4WON70-SRClgeuTFJk/edit#gid=300537807"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "2/10/2025",
+            "Name": "khushi",
+            "Phone": "7857463564",
+            "Email": "abs@gmail.com",
+            "Course Interested": "java"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Course Interested",
+              "displayName": "Course Interested",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        208
+      ],
+      "id": "13d71c79-b8de-47a3-bc10-2510b84b2868",
+      "name": "Save_Enquiry",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QO0ZtVzyWkPpMwdh",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Takes JSON with annual_fee, years and hostel (true or false). Returns the total cost.",
+        "jsCode": "  const input = JSON.parse(query);\n  const hostelFee = input.hostel ? 60000 : 0;\n  const perYear = Number(input.annual_fee) + hostelFee;\n  const total = perYear * Number(input.years);\n  return JSON.stringify({ per_year: perYear, total: total });"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        768,
+        208
+      ],
+      "id": "264ba18e-10f3-4dab-bcab-28af3e5f94b7",
+      "name": "Code Tool"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_courses": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_FAQ": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_Deadlines": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save_Enquiry": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f72cd53f-e6d9-484a-af49-ddf96c9ee7e0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d9520fea3abeb47c8ab8be865bb184b70dc4cc4959338fb1aed5b854b95c766b"
+  },
+  "nodeGroups": [],
+  "id": "fYr4nCTWSUtmiNVV",
+  "tags": []
+}
